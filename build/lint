@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pylint -rn *.py
+find . -iname "*.py" | xargs pylint -rn
