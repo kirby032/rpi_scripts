@@ -15,7 +15,7 @@ logLevels = {
     'INFO': logging.INFO,
     'DEBUG': logging.DEBUG
     }
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 class Monitor(object):
     '''Main class for all monitoring'''
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     try:
         monitor = Monitor()
-        logger.debug('Monitor: %s', str(monitor))
+        logger.debug('%s', str(monitor))
     # pylint: disable=broad-except
     except Exception:
         logger.exception('terminal exception encountered')
