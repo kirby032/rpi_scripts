@@ -7,6 +7,7 @@ import logging
 import sys
 
 from sensors.Sensor import Sensor
+import util.config
 
 logLevels = {
     'CRITICAL': logging.CRITICAL,
@@ -20,11 +21,12 @@ logger = logging.getLogger()
 class Monitor(object):
     '''Main class for all monitoring'''
 
-    def __init__(self):
-        self.sensor = Sensor('myconfig', 'handler')
+    def __init__(self, configFile):
+        self.config = util.config.configToJson(configFile)
+        self.sensor = Sensor(self.config, 'handler')
 
     def __str__(self):
-        return 'I\'m a monitor'
+        return 'Monitor w/ config file \n{}'.format(self.config)
 
 def get_parser():
     '''
@@ -38,6 +40,10 @@ def get_parser():
     defaultParser = argparse.ArgumentParser(description='parser_description')
     defaultParser.add_argument('--debug', '-d', action='store_true',
         help='enable debug mode which also outputs all logging to stdout')
+    defaultParser.add_argument('--config-file', '-c',
+        help='specify the config file to use (default: ' +
+            '"etc/config/HomeMonitor.cfg"',
+        default='etc/config/HomeMonitor.cfg')
     defaultParser.add_argument('--log-file', '-f',
         help='specify log file (default: "monitor.log")',
         default='monitor.log')
@@ -77,7 +83,7 @@ if __name__ == '__main__':
     setup_logging(args.log_level, args.log_file, args.debug)
 
     try:
-        monitor = Monitor()
+        monitor = Monitor(args.config_file)
         logger.debug('%s', str(monitor))
     # pylint: disable=broad-except
     except Exception:
