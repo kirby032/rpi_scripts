@@ -1,3 +1,4 @@
 .tags
 *.pyc
 temp.diff
+monitor.log
