@@ -6,7 +6,7 @@ import argparse
 import logging
 import sys
 
-from sensors.Sensor import Sensor
+from util.sensorFactory import buildSensorFromConfig
 import util.config
 
 logLevels = {
@@ -31,9 +31,14 @@ class Monitor(object):
         self.config = util.config.importConfig(configFile)
         self.sensors = []
         for sensor in self.config['sensors']:
-            self.sensors.append(Sensor(sensor, 'handler'))
+            self.sensors.append(buildSensorFromConfig(sensor,
+                lambda (sensor): logger.info('Sensor %striggered',
+                    str(sensor))))
 
     def getSensors(self):
+        '''
+        XXX: docstring
+        '''
         return self.sensors
 
     def __str__(self):
@@ -88,15 +93,15 @@ def setup_logging(logLevel, logFile, debug):
         streamHandler.setFormatter(formatter)
         logger.addHandler(streamHandler)
 
-def testDriver(monitor):
+def testDriver(mainMonitor):
     '''
     Driver for monitor to test functionality
 
     Args:
         monitor: An initialized monitor object
     '''
-    for sensor in monitor.getSensors():
-        print sensor
+    for sensor in mainMonitor.getSensors():
+        logger.warning('%s', str(sensor))
 
 if __name__ == '__main__':
     parser = get_parser()
