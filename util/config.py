@@ -2,9 +2,22 @@
 Utilities for working with configuration
 '''
 
-def configToJson(configFile):
+import json
+
+def importConfig(configFile):
     '''
-    Converts a JSON configuration file to a dictionary
+    Converts a JSON configuration file to a dictionary of settings
+
+    Args:
+        configFile: String that represents the file's path
+
+    Returns:
+        config: Dictionary of settings read from the json file
     '''
     # XXX: Need to write the json from config utility
-    return configFile
+    config = {}
+
+    with open(configFile, 'r') as f:
+        config = json.load(f)
+
+    return config

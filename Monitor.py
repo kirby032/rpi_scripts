@@ -22,11 +22,22 @@ class Monitor(object):
     '''Main class for all monitoring'''
 
     def __init__(self, configFile):
-        self.config = util.config.configToJson(configFile)
-        self.sensor = Sensor(self.config, 'handler')
+        '''
+        Constructor for Monitor class
+
+        Args:
+            configFile: String that represents the config file's path
+        '''
+        self.config = util.config.importConfig(configFile)
+        self.sensors = []
+        for sensor in self.config['sensors']:
+            self.sensors.append(Sensor(sensor, 'handler'))
+
+    def getSensors(self):
+        return self.sensors
 
     def __str__(self):
-        return 'Monitor w/ config file \n{}'.format(self.config)
+        return 'Monitor w/ {} sensors'.format(len(self.sensors))
 
 def get_parser():
     '''
@@ -77,6 +88,16 @@ def setup_logging(logLevel, logFile, debug):
         streamHandler.setFormatter(formatter)
         logger.addHandler(streamHandler)
 
+def testDriver(monitor):
+    '''
+    Driver for monitor to test functionality
+
+    Args:
+        monitor: An initialized monitor object
+    '''
+    for sensor in monitor.getSensors():
+        print sensor
+
 if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
@@ -85,6 +106,7 @@ if __name__ == '__main__':
     try:
         monitor = Monitor(args.config_file)
         logger.debug('%s', str(monitor))
+        testDriver(monitor)
     # pylint: disable=broad-except
     except Exception:
         logger.exception('terminal exception encountered')
