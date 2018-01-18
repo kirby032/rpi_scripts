@@ -3,7 +3,6 @@ XXX: docstring
 '''
 import logging
 import pkgutil
-from sensors.Sensor import Sensor
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +13,12 @@ for _, name, ispkg in pkgutil.iter_modules(['sensors']):
         tempClass = __import__('sensors', globals(), locals(), [name], -1) \
             .__getattribute__(name).__getattribute__(name)
         sensorClasses[name] = tempClass
+
+logger.info('Found %d sensor classes', len(sensorClasses))
+if logger.isEnabledFor(logging.DEBUG):
+    logger.debug('Sensor Classes:')
+    for sensorClass in sensorClasses:
+        logger.debug('\t%s', sensorClasses[sensorClass].__name__)
 
 def buildSensorFromConfig(config, triggerHandler):
     '''

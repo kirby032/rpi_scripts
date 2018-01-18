@@ -6,7 +6,6 @@ import argparse
 import logging
 import sys
 
-from util.sensorFactory import buildSensorFromConfig
 import util.config
 
 logLevels = {
@@ -28,12 +27,18 @@ class Monitor(object):
         Args:
             configFile: String that represents the config file's path
         '''
+        from util.reporterFactory import buildReporterFromConfig
+        from util.sensorFactory import buildSensorFromConfig
+
         self.config = util.config.importConfig(configFile)
         self.sensors = []
+        self.reporters = []
         for sensor in self.config['sensors']:
             self.sensors.append(buildSensorFromConfig(sensor,
                 lambda (sensor): logger.info('Sensor %striggered',
                     str(sensor))))
+        for reporter in self.config['reporters']:
+            self.reporters.append(buildReporterFromConfig(reporter))
 
     def getSensors(self):
         '''
@@ -41,8 +46,15 @@ class Monitor(object):
         '''
         return self.sensors
 
+    def getReporters(self):
+        '''
+        XXX: docstring
+        '''
+        return self.reporters
+
     def __str__(self):
-        return 'Monitor w/ {} sensors'.format(len(self.sensors))
+        return 'Monitor w/ {} sensors, {} reporters'.format(
+            len(self.sensors), len(self.reporters))
 
 def get_parser():
     '''
@@ -102,6 +114,8 @@ def testDriver(mainMonitor):
     '''
     for sensor in mainMonitor.getSensors():
         logger.warning('%s', str(sensor))
+    for reporter in mainMonitor.getReporters():
+        logger.warning('%s', str(reporter))
 
 if __name__ == '__main__':
     parser = get_parser()
