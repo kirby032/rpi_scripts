@@ -14,7 +14,6 @@ def importConfig(configFile):
     Returns:
         config: Dictionary of settings read from the json file
     '''
-    # XXX: Need to write the json from config utility
     config = {}
 
     with open(configFile, 'r') as f:

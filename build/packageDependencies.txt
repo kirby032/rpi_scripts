@@ -1,6 +1,7 @@
 pip
 - sudo apt-get install python-pip
 - pip install --upgrade pip
+
 Google Developers for email
 - pip install --upgrade google-api-python-client
 - Following this tutorial: https://developers.google.com/gmail/api/quickstart/python
@@ -8,3 +9,6 @@ Google Developers for email
 855812949275-6ulkj7m0k6l4htkucgmclkderj3emcl7.apps.googleusercontent.com
 - client secret:
 DgHBXqCPDCq7OZbFbD96v1aV
+
+Enable less secure apps for gmail account used for authentication
+https://myaccount.google.com/lesssecureapps
