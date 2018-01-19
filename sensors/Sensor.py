@@ -10,7 +10,6 @@ class Sensor(object):
     '''Base class for all sensors'''
 
     def __init__(self, config, triggerHandler):
-        self.config = config
         self.id = config['id']
         self.triggerHandler = triggerHandler
 

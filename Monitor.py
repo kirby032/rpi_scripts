@@ -5,6 +5,7 @@ This is the main monitor
 import argparse
 import logging
 import sys
+import time
 
 import util.config
 
@@ -35,10 +36,20 @@ class Monitor(object):
         self.reporters = []
         for sensor in self.config['sensors']:
             self.sensors.append(buildSensorFromConfig(sensor,
-                lambda (sensor): logger.info('Sensor %striggered',
-                    str(sensor))))
+                self.sensorTrigger))
         for reporter in self.config['reporters']:
             self.reporters.append(buildReporterFromConfig(reporter))
+
+    def sensorTrigger(self, sensor):
+        '''
+        XXX: docstring
+        '''
+        logger.info('Sensor %s triggered', sensor)
+
+        msg = 'Sensor {} was triggered!'.format(sensor)
+
+        for reporter in self.reporters:
+            reporter.send(msg)
 
     def getSensors(self):
         '''
@@ -112,12 +123,17 @@ def testDriver(mainMonitor):
     Args:
         monitor: An initialized monitor object
     '''
+    from sensors.MagSwitchSensor import MagSwitchSensor
     for sensor in mainMonitor.getSensors():
         logger.warning('%s', str(sensor))
+        if isinstance(sensor, MagSwitchSensor):
+            sensor.setSwitchState(1)
+            sensor.setSwitchState(0)
+            time.sleep(6)
+            sensor.setSwitchState(1)
 
     for reporter in mainMonitor.getReporters():
         logger.warning('%s', str(reporter))
-        reporter.send('This is a test')
 
 if __name__ == '__main__':
     parser = get_parser()
@@ -126,7 +142,8 @@ if __name__ == '__main__':
 
     try:
         monitor = Monitor(args.config_file)
-        logger.debug('%s', str(monitor))
+        while 1:
+            time.sleep(5)
         testDriver(monitor)
     # pylint: disable=broad-except
     except Exception:

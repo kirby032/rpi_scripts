@@ -12,7 +12,6 @@ class Reporter(object):
     '''
 
     def __init__(self, config):
-        self.config = config
         self.id = config['id']
 
     def __str__(self):
