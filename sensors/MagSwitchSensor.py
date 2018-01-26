@@ -12,10 +12,10 @@ try:
     # pylint: disable=wrong-import-position
     import RPi.GPIO as GPIO
     platform = 'rpi'
-    logger.warning(
+    logger.info(
         'Detected Raspberry PI platform so using real MagSwitchSensor')
 except ImportError:
-    logger.warning(
+    logger.info(
         'Detected non Raspberry PI platform so using mock MagSwitchSensor')
 
 EDGE_TYPE_KEY = 'edge_type'

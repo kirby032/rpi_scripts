@@ -39,7 +39,7 @@ class SMTPReporter(Reporter):
         message['To'] = ','.join(self.smtpConfig[EMAIL_RECIPIENTS_KEY])
 
         if self.smtpConfig[LOG_ONLY_KEY]:
-            logger.warning('SMTPReporter Message:\n%s', message.as_string())
+            logger.info('SMTPReporter Message:\n%s', message.as_string())
             return
 
         password = util.config.importConfig(

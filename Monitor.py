@@ -35,11 +35,13 @@ class Monitor(object):
         self.config = config
         self.sensors = []
         self.reporters = []
-        for sensor in self.config['sensors']:
-            self.sensors.append(buildSensorFromConfig(sensor,
-                self.sensorTrigger))
-        for reporter in self.config['reporters']:
-            self.reporters.append(buildReporterFromConfig(reporter))
+        if 'sensors' in self.config:
+            for sensor in self.config['sensors']:
+                self.sensors.append(buildSensorFromConfig(sensor,
+                    self.sensorTrigger))
+        if 'reporters' in self.config:
+            for reporter in self.config['reporters']:
+                self.reporters.append(buildReporterFromConfig(reporter))
 
     def sensorTrigger(self, sensor):
         '''
@@ -49,10 +51,14 @@ class Monitor(object):
 
         msg = 'Sensor {} was triggered!'.format(sensor)
 
+        threads = []
         for reporter in self.reporters:
-            thread = Thread(target=reporter.send, args=(msg))
+            thread = Thread(target=reporter.send, args=[msg])
             thread.daemon = True
             thread.start()
+            threads.append(thread)
+
+        return threads
 
     def getSensors(self):
         '''
