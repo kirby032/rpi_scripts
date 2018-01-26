@@ -22,17 +22,17 @@ logger = logging.getLogger()
 class Monitor(object):
     '''Main class for all monitoring'''
 
-    def __init__(self, configFile):
+    def __init__(self, config):
         '''
         Constructor for Monitor class
 
         Args:
-            configFile: String that represents the config file's path
+            config: JSON config for the Monitor class
         '''
         from util.reporterFactory import buildReporterFromConfig
         from util.sensorFactory import buildSensorFromConfig
 
-        self.config = util.config.importConfig(configFile)
+        self.config = config
         self.sensors = []
         self.reporters = []
         for sensor in self.config['sensors']:
@@ -50,7 +50,9 @@ class Monitor(object):
         msg = 'Sensor {} was triggered!'.format(sensor)
 
         for reporter in self.reporters:
-            Thread(target=reporter.send, args=(msg)).start()
+            thread = Thread(target=reporter.send, args=(msg))
+            thread.daemon = True
+            thread.start()
 
     def getSensors(self):
         '''
@@ -117,24 +119,24 @@ def setup_logging(logLevel, logFile, debug):
         streamHandler.setFormatter(formatter)
         logger.addHandler(streamHandler)
 
-def testDriver(mainMonitor):
-    '''
-    Driver for monitor to test functionality
-
-    Args:
-        monitor: An initialized monitor object
-    '''
-    from sensors.MagSwitchSensor import MagSwitchSensor
-    for sensor in mainMonitor.getSensors():
-        logger.warning('%s', str(sensor))
-        if isinstance(sensor, MagSwitchSensor):
-            sensor.setSwitchState(1)
-            sensor.setSwitchState(0)
-            time.sleep(6)
-            sensor.setSwitchState(1)
-
-    for reporter in mainMonitor.getReporters():
-        logger.warning('%s', str(reporter))
+#def testDriver(mainMonitor):
+#    '''
+#    Driver for monitor to test functionality
+#
+#    Args:
+#        monitor: An initialized monitor object
+#    '''
+#    from sensors.MagSwitchSensor import MagSwitchSensor
+#    for sensor in mainMonitor.getSensors():
+#        logger.warning('%s', str(sensor))
+#        if isinstance(sensor, MagSwitchSensor):
+#            sensor.setSwitchState(1)
+#            sensor.setSwitchState(0)
+#            time.sleep(6)
+#            sensor.setSwitchState(1)
+#
+#    for reporter in mainMonitor.getReporters():
+#        logger.warning('%s', str(reporter))
 
 if __name__ == '__main__':
     parser = get_parser()
@@ -142,10 +144,9 @@ if __name__ == '__main__':
     setup_logging(args.log_level, args.log_file, args.debug)
 
     try:
-        monitor = Monitor(args.config_file)
+        monitor = Monitor(util.config.importConfig(args.config_file))
         while 1:
-            time.sleep(5)
-        testDriver(monitor)
+            time.sleep(100)
     # pylint: disable=broad-except
     except Exception:
         logger.exception('terminal exception encountered')
