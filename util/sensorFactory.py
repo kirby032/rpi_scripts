@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 sensorClasses = {}
 
 for _, name, ispkg in pkgutil.iter_modules(['sensors']):
-    if not ispkg and name != 'Sensor':
+    if not ispkg and name != 'Sensor' and name[-5:] != '_test':
         tempClass = __import__('sensors', globals(), locals(), [name], -1) \
             .__getattribute__(name).__getattribute__(name)
         sensorClasses[name] = tempClass

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 reportingClasses = {}
 
 for _, name, ispkg in pkgutil.iter_modules(['reporting']):
-    if not ispkg and name != 'Reporter':
+    if not ispkg and name != 'Reporter' and name[-5:] != '_test':
         tempClass = __import__('reporting', globals(), locals(), [name], -1) \
             .__getattribute__(name).__getattribute__(name)
         reportingClasses[name] = tempClass
