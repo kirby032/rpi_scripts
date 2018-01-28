@@ -81,5 +81,3 @@ class MagSwitchSensor(Sensor):
         if self.state != state and bool(state) == self.isRisingEdgeDetected:
             self.trigger(self.config[INPUT_PIN_KEY])
         self.state = state
-
-

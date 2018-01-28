@@ -15,4 +15,5 @@ class SMSReporter(Reporter):
     '''
 
     def __init__(self, config):
+        # pylint: disable=useless-super-delegation
         super(SMSReporter, self).__init__(config)

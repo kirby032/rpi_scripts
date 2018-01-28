@@ -25,7 +25,7 @@ def validateConfig(config, keys):
     '''
     XXX: Docstring
     '''
-    if keys is None or len(keys) == 0:
+    if not keys:
         return True
 
     if config is None:
@@ -44,4 +44,3 @@ class ConfigKeyMissingError(Exception):
     XXX: Docstring
     '''
     pass
-
