@@ -31,6 +31,7 @@ class MagSwitchSensor(Sensor):
         self.config = config['data']
         self.triggerHandler = triggerHandler
         self.lastTrigger = 0
+        # XXX: Need to call validateConfig()
 
         if self.config[EDGE_TYPE_KEY].upper() == 'RISING':
             self.isRisingEdgeDetected = True

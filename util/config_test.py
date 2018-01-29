@@ -1,4 +1,5 @@
 # pylint: disable=missing-docstring
+# pylint: disable=no-self-use
 import json
 import unittest
 import util.config
@@ -9,10 +10,10 @@ class TestValidateConfig(unittest.TestCase):
             self.assertTrue(util.config.validateConfig(None, ['1', '2', '3']))
 
     def test_keys_is_none(self):
-        self.assertTrue(util.config.validateConfig({'data': None}, None))
+        util.config.validateConfig({'data': None}, None)
 
     def test_keys_is_empty(self):
-        self.assertTrue(util.config.validateConfig({'data': None}, {}))
+        util.config.validateConfig({'data': None}, {})
 
     def test_all_keys_in_config(self):
         config = '''
