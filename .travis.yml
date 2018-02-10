@@ -3,6 +3,8 @@ language: python
 
 install:
     - pip install --user -r requirements.txt
+    - pip install --user mock --upgrade
+    - pip install --user six --upgrade
 
 script:
     - ./build/test
