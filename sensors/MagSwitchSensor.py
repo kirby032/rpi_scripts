@@ -36,20 +36,14 @@ class MagSwitchSensor(Sensor):
         self.triggerHandler = triggerHandler
         self.lastTrigger = 0
 
-        if self.config[CONFIG_KEYS['EDGE_TYPE_KEY']].upper() == 'RISING':
-            self.isRisingEdgeDetected = True
-        elif self.config[CONFIG_KEYS['EDGE_TYPE_KEY']].upper() == 'FALLING':
-            self.isRisingEdgeDetected = False
+        self.initState()
+
+        if platform == 'rpi':
+            self.rpiInitState()
         else:
-            logger.error('%s in config file had unexpected value \'%s\'',
-                CONFIG_KEYS['EDGE_TYPE_KEY'],
-                self.config[CONFIG_KEYS['EDGE_TYPE_KEY']])
-            logger.error('Expected either \'RISING\' or \'FALLING\'')
+            self.genericInitState()
 
-        if platform != 'rpi':
-            self.state = 0 if self.isRisingEdgeDetected else 1
-            return
-
+    def rpiInitState(self):
         # Set up for BCM pin numbering scheme
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.config[CONFIG_KEYS['INPUT_PIN_KEY']], GPIO.IN,
@@ -62,6 +56,20 @@ class MagSwitchSensor(Sensor):
         logger.debug('Setup up MagSwitchSensor on pin %d for %s edge trigger',
             self.config[CONFIG_KEYS['INPUT_PIN_KEY']],
             'RISING' if self.isRisingEdgeDetected else 'FALLING')
+
+    def genericInitState(self):
+        self.state = 0 if self.isRisingEdgeDetected else 1
+
+    def initState(self):
+        if self.config[CONFIG_KEYS['EDGE_TYPE_KEY']].upper() == 'RISING':
+            self.isRisingEdgeDetected = True
+        elif self.config[CONFIG_KEYS['EDGE_TYPE_KEY']].upper() == 'FALLING':
+            self.isRisingEdgeDetected = False
+        else:
+            logger.error('%s in config file had unexpected value \'%s\'',
+                CONFIG_KEYS['EDGE_TYPE_KEY'],
+                self.config[CONFIG_KEYS['EDGE_TYPE_KEY']])
+            logger.error('Expected either \'RISING\' or \'FALLING\'')
 
     def trigger(self, _):
         '''
