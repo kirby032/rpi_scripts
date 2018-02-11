@@ -35,6 +35,7 @@ class MagSwitchSensor(Sensor):
         self.config = config['data']
         self.triggerHandler = triggerHandler
         self.lastTrigger = 0
+        self.state = 0
 
         self.initState()
 
@@ -44,6 +45,9 @@ class MagSwitchSensor(Sensor):
             self.genericInitState()
 
     def rpiInitState(self):
+        '''
+        XXX: docstring
+        '''
         # Set up for BCM pin numbering scheme
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.config[CONFIG_KEYS['INPUT_PIN_KEY']], GPIO.IN,
@@ -58,9 +62,15 @@ class MagSwitchSensor(Sensor):
             'RISING' if self.isRisingEdgeDetected else 'FALLING')
 
     def genericInitState(self):
-        self.state = 0 if self.isRisingEdgeDetected else 1
+        '''
+        XXX: docstring
+        '''
+        self.state = (0 if self.isRisingEdgeDetected else 1)
 
     def initState(self):
+        '''
+        XXX: docstring
+        '''
         if self.config[CONFIG_KEYS['EDGE_TYPE_KEY']].upper() == 'RISING':
             self.isRisingEdgeDetected = True
         elif self.config[CONFIG_KEYS['EDGE_TYPE_KEY']].upper() == 'FALLING':
