@@ -5,8 +5,7 @@ import unittest
 
 import mock
 
-class Object(object):
-    pass
+from util.classes import Object
 
 class TestSensorFactoryPreImport(unittest.TestCase):
     def setUp(self):
@@ -14,7 +13,7 @@ class TestSensorFactoryPreImport(unittest.TestCase):
         self.sensors = []
 
         # Import the real module
-        self.sensorFactory = self.sensorFactory = __import__(
+        self.sensorFactory = __import__(
             'util.sensorFactory', globals(), locals(),
             ['buildSensorFromConfig'], -1)
 
@@ -38,8 +37,9 @@ class TestSensorFactoryPreImport(unittest.TestCase):
         '''
         if pkgName in self.sensors:
             val = Object()
-            setattr(val, pkgName[8:], Object())
-            setattr(getattr(val, pkgName[8:]), pkgName[8:], mock.Mock())
+            setattr(val, pkgName[len('sensors.'):], Object())
+            setattr(getattr(val, pkgName[len('sensors.'):]),
+                pkgName[len('sensors.'):], mock.Mock())
             return val
 
         return self.real_import(pkgName, _globals, _locals, _fromlist, _level)
@@ -104,18 +104,18 @@ class TestSensorFactoryPostImport(unittest.TestCase):
             globals(), locals(), ['buildSensorFromConfig'], -1) \
             .__getattribute__('buildSensorFromConfig')
 
-    def testBuildGenericSensor(self):
+    def test_build_generic_sensor(self):
         with self.assertRaises(KeyError):
             self.buildSensorFromConfig(
                 {'type': 'Sensor', 'id': 'myBaseSensor'}, lambda: 0)
 
-    def testBuildInvalidSensor(self):
+    def test_build_invalid_sensor(self):
         # XXX: Should make this KeyError more explict exception
         with self.assertRaises(KeyError):
             self.buildSensorFromConfig(
                 {'type': 'NonExistent', 'id': 'myFakeSensor'}, lambda: 0)
 
-    def testBuildMagSwitchSensor(self):
+    def test_build_MagSwitchSensor(self):
         from sensors.MagSwitchSensor import MagSwitchSensor
         sensor = self.buildSensorFromConfig(
             {'type': 'MagSwitchSensor', 'id': 'magSensor1', 'data': {

@@ -8,11 +8,20 @@ logger = logging.getLogger(__name__)
 
 reportingClasses = {}
 
+foundBaseClass = False
 for _, name, ispkg in pkgutil.iter_modules(['reporting']):
-    if not ispkg and name != 'Reporter' and name[-5:] != '_test':
-        tempClass = __import__('reporting', globals(), locals(), [name], -1) \
-            .__getattribute__(name).__getattribute__(name)
+    if name == 'Reporter':
+        foundBaseClass = True
+        continue
+    # If it is a package and not a test file:
+    if not ispkg and name[-5:] != '_test':
+        tempClass = __import__('reporting.' + name, globals(), locals(), [],
+            -1).__getattribute__(name).__getattribute__(name)
         reportingClasses[name] = tempClass
+
+if not foundBaseClass:
+    raise KeyError('Could not find Reporter.py. Must have a base class in ' +
+        'order to define reporters')
 
 logger.info('Found %d reporter classes', len(reportingClasses))
 if logger.isEnabledFor(logging.DEBUG):
