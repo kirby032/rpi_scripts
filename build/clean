@@ -1,3 +1,4 @@
 #!/bin/bash
 
 find . -iname "*.pyc" | xargs rm
+rm monitor.log
