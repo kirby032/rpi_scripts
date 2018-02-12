@@ -50,9 +50,7 @@ class MagSwitchSensor(Sensor):
         '''
         # Set up for BCM pin numbering scheme
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.config[CONFIG_KEYS['INPUT_PIN_KEY']], GPIO.IN,
-            pull_up_down=(
-                GPIO.PUD_DOWN if self.isRisingEdgeDetected else GPIO.PUD_UP))
+        GPIO.setup(self.config[CONFIG_KEYS['INPUT_PIN_KEY']], GPIO.IN)
         GPIO.add_event_detect(self.config[CONFIG_KEYS['INPUT_PIN_KEY']],
             GPIO.RISING if self.isRisingEdgeDetected else GPIO.FALLING,
             callback=self.trigger)
@@ -90,14 +88,15 @@ class MagSwitchSensor(Sensor):
                 self.config[CONFIG_KEYS['DELAY_KEY']]:
             logger.debug('MagSwitchSensor %s triggered!', self.id)
             self.lastTrigger = time.time()
-            self.triggerHandler(self)
-            return
+            return self.triggerHandler(self)
         else:
             logger.debug('Sensor %s triggered but had not achieved long ' +
                 'enough delay', str(self))
             logger.debug('CurrentTime: %d', currentTime)
             logger.debug('LastTrigger: %d', self.lastTrigger)
             logger.debug('Delay: %d', self.config[CONFIG_KEYS['DELAY_KEY']])
+
+        return None
 
     def setSwitchState(self, state):
         '''

@@ -1,7 +1,7 @@
 '''
 XXX: docstring
 '''
-
+import datetime
 import logging
 from email.mime.text import MIMEText
 import smtplib
@@ -31,18 +31,20 @@ class SMTPReporter(Reporter):
         self.smtpConfig = config['data']
         util.config.validateConfig(config.get('data'), CONFIG_KEYS)
 
-    def send(self, msg):
+    def send(self, msg, event):
         '''
         XXX: docstring
         '''
         message = MIMEText(msg)
-        message['Subject'] = self.smtpConfig[CONFIG_KEYS['SUBJECT_KEY']]
+        message['Subject'] = str(datetime.date.today()) + ': ' + \
+            self.smtpConfig[CONFIG_KEYS['SUBJECT_KEY']]
         message['From'] = self.smtpConfig[CONFIG_KEYS['EMAIL_FROM_KEY']]
         message['To'] = ','.join(
             self.smtpConfig[CONFIG_KEYS['EMAIL_RECIPIENTS_KEY']])
 
         if self.smtpConfig[CONFIG_KEYS['LOG_ONLY_KEY']]:
             logger.info('SMTPReporter Message:\n%s', message.as_string())
+            event.set()
             return
 
         password = util.config.importConfig(
@@ -64,4 +66,5 @@ class SMTPReporter(Reporter):
                 self.smtpConfig[CONFIG_KEYS['SMTP_DOMAIN_KEY']],
                 self.smtpConfig[CONFIG_KEYS['SMTP_PORT_KEY']])
             logger.error('Error: %s', str(error))
-            raise
+
+        event.set()

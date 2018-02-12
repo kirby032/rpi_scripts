@@ -6,7 +6,7 @@ import argparse
 import logging
 import sys
 import time
-from threading import Thread
+from threading import Thread, Event
 
 import util.config
 
@@ -51,14 +51,15 @@ class Monitor(object):
 
         msg = 'Sensor {} was triggered!'.format(sensor)
 
-        threads = []
+        events = []
         for reporter in self.reporters:
-            thread = Thread(target=reporter.send, args=[msg])
+            event = Event()
+            events.append(event)
+            thread = Thread(target=reporter.send, args=[msg, event])
             thread.daemon = True
             thread.start()
-            threads.append(thread)
 
-        return threads
+        return events
 
     def getSensors(self):
         '''

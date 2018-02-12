@@ -40,6 +40,9 @@ class TestReporterFactoryPreImport(unittest.TestCase):
             setattr(val, pkgName[len('reporting.'):], Object())
             setattr(getattr(val, pkgName[len('reporting.'):]),
                 pkgName[len('reporting.'):], mock.Mock())
+            setattr(getattr(getattr(
+                val, pkgName[len('reporting.'):]), pkgName[len('reporting.'):]),
+                '__name__', pkgName[len('reporting.'):])
             return val
 
         return self.real_import(pkgName, _globals, _locals, _fromlist, _level)

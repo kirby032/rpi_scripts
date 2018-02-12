@@ -40,6 +40,9 @@ class TestSensorFactoryPreImport(unittest.TestCase):
             setattr(val, pkgName[len('sensors.'):], Object())
             setattr(getattr(val, pkgName[len('sensors.'):]),
                 pkgName[len('sensors.'):], mock.Mock())
+            setattr(getattr(getattr(
+                val, pkgName[len('sensors.'):]), pkgName[len('sensors.'):]),
+                '__name__', pkgName[len('sensors.'):])
             return val
 
         return self.real_import(pkgName, _globals, _locals, _fromlist, _level)

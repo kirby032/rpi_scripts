@@ -1,3 +1,4 @@
 pylint
 mock
 virtualenv
+partial

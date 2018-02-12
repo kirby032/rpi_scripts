@@ -13,19 +13,20 @@ class TestMonitor(unittest.TestCase):
     def test_create_empty_config(self):
         Monitor(self.EMPTY_CONFIG)
 
-    @mock.patch('reporting.Reporter.Reporter.send')
+    @mock.patch('reporting.Reporter.Reporter.send',
+        side_effect=lambda msg, event: event.set())
     def test_sensor_trigger(self, reporter_send):
         reporter = Reporter(json.loads('{ "id": "testReporter" }'))
         monitor = Monitor(self.EMPTY_CONFIG)
         monitor.reporters.append(reporter)
 
-        threads = monitor.sensorTrigger('testSensor')
+        events = monitor.sensorTrigger('testSensor')
 
-        for thread in threads:
-            thread.join()
+        for event in events:
+            event.wait()
 
         reporter_send.assert_called_once_with(
-            'Sensor testSensor was triggered!')
+            'Sensor testSensor was triggered!', events[0])
 
     @mock.patch('util.reporterFactory.buildReporterFromConfig')
     @mock.patch('util.sensorFactory.buildSensorFromConfig')
